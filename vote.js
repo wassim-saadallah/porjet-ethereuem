@@ -5,9 +5,10 @@ web3.personal.unlockAccount("0xc98c1f7189f89aa37993063096acc1a090cf8f3e", "hamza
 var srcContent;
 var reader;
 var name;
-var abi = [{ "constant": false, "inputs": [{ "name": "proposalHash", "type": "bytes32" }], "name": "addProposal", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "f", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "showProposals", "outputs": [{ "name": "", "type": "bytes32[]" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "proposalHash", "type": "bytes32" }], "name": "voteForProposal", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "", "type": "bytes32" }, { "indexed": false, "name": "", "type": "uint256" }], "name": "Show_hash", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "name": "", "type": "bytes32[]" }], "name": "Show_best", "type": "event" }];
+var arr;
+var abi = [{"constant":false,"inputs":[{"name":"proposalHashFirst","type":"bytes32"},{"name":"proposalHashSecond","type":"bytes14"}],"name":"addProposal","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"f","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"index","type":"bytes32"}],"name":"showProposals","outputs":[{"name":"","type":"bytes14"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"showFullProposals","outputs":[{"name":"","type":"bytes32[]"}],"payable":false,"stateMutability":"view","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"","type":"bytes32"},{"indexed":false,"name":"","type":"uint256"}],"name":"Show_hash","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"","type":"bytes32[]"}],"name":"Show_best","type":"event"}];
 var Examcontract = web3.eth.contract(abi);
-var contractInstance = Examcontract.at("0x43615bc3336cdb6c36e344562a5c349583607258");
+var contractInstance = Examcontract.at("0x8089892aEFF19674742afD0ba25DB1E54D32B3C7");
 
 
 function showHashes(arr){
@@ -18,12 +19,39 @@ function showHashes(arr){
             <input type="checkbox" aria-label="Checkbox for following text input">
           </div>
         </div>
-        <a href="#" class="list-group-item">${web3.toAscii(elem)}</a>
+        <a href="#" id="show" class="list-group-item">${web3.toAscii(elem)}</a>
       </div>
 </div>`).reduce((p, c) => p + c, "");
-    console.log(divs)
     $("#hashesContainer").append(divs);
 }
 
-var result = contractInstance.showProposals.call({ from: web3.eth.accounts[0], gas: 3000000 },
-    function (err, res) { showHashes(res) });
+
+function showFile(hashHexed){
+    contractInstance.showProposals.call(hashHexed,{ from: web3.eth.accounts[0], gas: 3000000 },
+    function(err, res){
+        console.log(hashHexed + "--" +  res);
+        ipfs.files.cat('/ipfs/'+web3.toAscii(hashHexed) + web3.toAscii(res), function(err, file){
+            if(err) console.log(err)
+            console.log('we got a file : ' + file.toString())
+             $('#displayFile').attr('data', file.toString('utf8'));
+        });
+    })
+
+    
+}
+
+
+contractInstance.showFullProposals.call({ from: web3.eth.accounts[0], gas: 3000000 },
+    function (err, res) { 
+        arr = res;
+        showHashes(res)
+        var children    = $('#hashesContainer').children();
+        for(var i = 1; i < children.length; i++){
+            children.click(function(e){
+                // console.log(web3.fromAscii(e.target.text))
+                showFile(web3.fromAscii(e.target.text));
+            })
+        }
+     });
+
+
