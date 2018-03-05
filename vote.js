@@ -68,7 +68,7 @@ contractInstance.getAllProposals.call({ from: web3.eth.accounts[0], gas: 3000000
         arr = res;
         showHashes(res)
         var children    = $('#hashesContainer').children();
-        for(var i = 1; i < children.length; i++){
+        for(var i = 0; i < children.length; i++){
             children[i].querySelector("a").addEventListener("click", function(e){
                 //console.log(web3.fromAscii(e.target.id))
                 showFile(web3.fromAscii(e.target.id));
