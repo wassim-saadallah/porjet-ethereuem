@@ -20,7 +20,7 @@ $(document).ready(function () {
     $("#file").change(function () {
         if (this.files[0].name != "") {
             readURL(this);
-            console.log(this.files.length)
+           // console.log(this.files.length)
         }
     });
     $('#btnPrvw').click(function () {
