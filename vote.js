@@ -19,7 +19,8 @@ function showHashes(arr){
         <div class="input-group-prepend">
           <div class="input-group-text">
             <input type="checkbox" class="voteForItem"
-            value="${web3.toAscii(elem)}" aria-label="Checkbox for following text input">
+            value="${web3.toAscii(elem)}" aria-label="Checkbox for following text input"
+            >
           </div>
         </div>
         <a href="#" id="${web3.toAscii(elem)}" class="list-group-item">Proposition ${i}</a>
@@ -50,12 +51,15 @@ $('#submit').click(function () {
        // console.log("123");
     });
     
-    console.log(chkArray);
+    console.log(chkArray.length);
 
-    contractInstance.voteForProposal(chkArray, {from: web3.eth.accounts[0] , gas: 3000000}, function(err, res){
-        if(err) console.log(err);
-        console.log(res);
-    });
+    if(chkArray.length > 4) alert("Vous pouvez sélectionner seulement 4 éléments");
+    else {
+        contractInstance.voteForProposal(chkArray, {from: web3.eth.accounts[0] , gas: 3000000}, function(err, res){
+            if(err) console.log(err);
+            console.log(res);
+        });
+    }
 })
 
 
