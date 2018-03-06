@@ -16,12 +16,6 @@ var arr;
 function showHashes(arr){
     var divs = arr.map((elem,i) => `<div class="list-group">
     <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <div class="input-group-text">
-            <input type="checkbox" class="voteForItem"
-            value="${web3.toAscii(elem)}" aria-label="Checkbox for following text input">
-          </div>
-        </div>
         <a href="#" id="${web3.toAscii(elem)}" class="list-group-item">Proposition ${i}</a>
       </div>
 </div>`).reduce((p, c) => p + c, "");
